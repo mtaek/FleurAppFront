@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: flower-delivery-app
+    env: node
+    buildCommand: "./render-build.sh"
+    startCommand: "npm start"
+    envVars:
+      - key: NODE_VERSION
+        value: 18.20.4
+      - key: NPM_VERSION  
+        value: 9.8.1
+    autoDeploy: false
