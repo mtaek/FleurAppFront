@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+// Initialize Stripe conditionally to avoid build-time errors
+const getStripe = () => {
+  const secretKey = process.env.STRIPE_SECRET_KEY;
+  
+  if (!secretKey || secretKey === 'sk_test_placeholder_for_build') {
+    throw new Error('STRIPE_SECRET_KEY is not configured or is a placeholder');
+  }
+  
+  return new Stripe(secretKey);
+};
 
 export async function POST(request: NextRequest) {
   try {
     const { amount, deliveryInfo } = await request.json();
+
+    // Initialize Stripe instance
+    const stripe = getStripe();
 
     // Créer un PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
